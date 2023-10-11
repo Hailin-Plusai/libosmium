@@ -7,7 +7,7 @@
 #-----------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 
 #-----------------------------------------------------------------------------
@@ -132,12 +132,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
     find_program(GCOV ${gcov_} DOC "Coverage tool")
     find_program(GCOVR "gcovr" DOC "Coverage report tool")
 
-    set(coverage_report_dir "${CMAKE_BINARY_DIR}/coverage")
+    set(coverage_report_dir "${CMAKE_CURRENT_BINARY_DIR}/coverage")
     file(MAKE_DIRECTORY ${coverage_report_dir})
     add_custom_target(coverage
         ${GCOVR}
-        ${CMAKE_BINARY_DIR}
-        --root=${CMAKE_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
+        --root=${CMAKE_CURRENT_SOURCE_DIR}
         --html --html-details
         #--verbose
         #--keep
@@ -356,7 +356,8 @@ if(CPPCHECK)
     add_custom_target(cppcheck
         ${CPPCHECK}
         --std=c++11 ${CPPCHECK_OPTIONS}
-        -I ${CMAKE_SOURCE_DIR}/include
+        -p ${CMAKE_CURRENT_BINARY_DIR}
+        -I ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CPPCHECK_FILES}
     )
 else()
@@ -441,7 +442,7 @@ if(CLANG_TIDY)
     endif()
 
     if(BUILD_HEADERS)
-        file(GLOB_RECURSE CT_ALL_INCLUDES ${CMAKE_BINARY_DIR}/header_check/osmium__*.cpp)
+        file(GLOB_RECURSE CT_ALL_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/header_check/osmium__*.cpp)
     endif()
 
     if(BUILD_BENCHMARKS)
@@ -469,7 +470,7 @@ if(CLANG_TIDY)
 
     add_custom_target(clang-tidy
         ${CLANG_TIDY}
-        -p ${CMAKE_BINARY_DIR}
+        -p ${CMAKE_CURRENT_BINARY_DIR}
         "-extra-arg=-Wno-#pragma-messages"
         ${CT_CHECK_FILES}
     )
